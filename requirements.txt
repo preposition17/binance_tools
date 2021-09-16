@@ -1,0 +1,14 @@
+certifi==2021.5.30
+charset-normalizer
+fake-useragent==0.1.11
+idna==3.2
+pyTelegramBotAPI
+python-dotenv
+requests
+requests-futures==1.0.0
+tabulate
+urllib3==1.26.6
+
+bs4
+pythonping
+requests-html
