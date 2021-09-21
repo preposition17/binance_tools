@@ -35,6 +35,7 @@ if __name__ == '__main__':
     if selected_mode == 1:
         batch_size = int(input("Enter minimum batch size: ")) - 1
         batch_parser = BatchMode(selected_sale_serial_num)
+        batch_parser.proxy_file = os.path.join("proxy", "proxy_batch.txt")
         is_bot = False
         if input("Use a telegram bot? (y/n) ").lower() == "y":
             is_bot = True
