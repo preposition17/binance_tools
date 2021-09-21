@@ -131,3 +131,4 @@ dmypy.json
 /proxy
 /proxy/proxy*
 .env
+.gitignore
