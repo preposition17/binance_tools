@@ -14,15 +14,14 @@ chat_id = -1001524854248
 
 class Boxes:
     def __init__(self, serial_number):
-        # self.__serial_number = "131943993880671232"
+        self.proxy_file = "../proxy/proxy_batch.txt"
         self.__serial_number = str(serial_number)
         self.__all_boxes = None
         self.__all_batched_boxes = None
 
 
-    @staticmethod
-    def get_proxy():
-        with open("proxy_batch.txt", "r") as file:
+    def get_proxy(self):
+        with open(self.proxy_file, "r") as file:
             proxy_list = file.read().splitlines()
             return random.choice(proxy_list)
 
