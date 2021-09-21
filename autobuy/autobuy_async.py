@@ -18,29 +18,41 @@ from utils import proxy_generator
 
 
 class AioAutobuy:
-    def __init__(self, sale_id: str, box_num: int, use_proxy: bool=False):
-        self.logger = logging.getLogger("AioAutoBuy")
-        logging.basicConfig(filename="../logs/autobuy.log", level=logging.DEBUG)
-        logging.info(f'\n{get_time()}: Autobuy initialization.')
+    def __init__(self, sale_id: str, box_num: int, use_proxy: bool = False):
 
-        self.auth_url = "https://www.binance.com/bapi/accounts/v1/public/authcenter/auth"
-        self.sale_data_url = "https://www.binance.com/bapi/nft/v1/friendly/nft/mystery-box/detail"
-        self.purchase_url = "https://www.binance.com/bapi/nft/v1/private/nft/mystery-box/purchase"
-
+        # User settings
         self.sale_id = sale_id
         self.box_num = box_num
         self.use_proxy = use_proxy
 
-        load_dotenv("../.env")
+        # Files path
+        self.logger_file = "../logs/autobuy.log"
+        self.env_file = "../.env"
+        self.proxy_file = "../proxy/proxy_autobuy.txt"
+
+        # Logger
+        self.logger = logging.getLogger("AioAutoBuy")
+        logging.basicConfig(filename=self.logger_file, level=logging.DEBUG)
+        logging.info(f'\n{get_time()}: Autobuy initialization.')
+
+        # URLs
+        self.auth_url = "https://www.binance.com/bapi/accounts/v1/public/authcenter/auth"
+        self.sale_data_url = "https://www.binance.com/bapi/nft/v1/friendly/nft/mystery-box/detail"
+        self.purchase_url = "https://www.binance.com/bapi/nft/v1/private/nft/mystery-box/purchase"
+
+        # Session settings
+        load_dotenv(self.env_file)
         __ua = UserAgent()
         self.user_agent = __ua.chrome
         self.__cookies_string = os.getenv('COOKIE')
         self.cookies = get_cookies(cookies_string=self.__cookies_string)
         self.csrf_token = os.getenv('CSRFTOKEN')
 
-        proxy_list = get_proxy_list("../proxy_autobuy.txt")
+        # Proxy
+        proxy_list = get_proxy_list(self.proxy_file)
         self.proxy_generator = proxy_generator(proxy_list)
 
+        # Program vars
         self.sale_start_time = None
         self.sale_started = False
         self.is_auth = False
@@ -50,15 +62,6 @@ class AioAutobuy:
         self.requests_start_time = None
         self.requests_end_time = None
         self.sec_to_stop = 0
-
-
-    @classmethod
-    async def create(cls, sale_id: str, box_num: int):
-        self = AioAutobuy(sale_id=sale_id, box_num=box_num)
-        self.sale_start_time = await self.get_sale_start_time()
-
-        return self
-
 
     async def run(self):
         self.logger.info(f'{get_time()}: Main loop running...')
@@ -81,7 +84,6 @@ class AioAutobuy:
                 asyncio.create_task(self.stop(), name="Stop process"),
             ]
             await asyncio.gather(*tasks)
-
 
     async def get_sale_start_time(self, session):
         # Get sale start time in unix time if response successful
@@ -110,7 +112,6 @@ class AioAutobuy:
                 if try_count == 5:
                     print("Global error while getting sale start time, exiting...")
                     exit()
-
 
     async def auth(self, session):
         # Try to auth on Binance
@@ -159,7 +160,6 @@ class AioAutobuy:
                     print("Trying to purchase...")
                     self.sale_started = True
 
-
     async def run_async_purchasing(self, session):
         if self.sale_started:
             self.requests_start_time = time.time()
@@ -168,7 +168,6 @@ class AioAutobuy:
             for i in range(20):
                 tasks.append(self.purchase_request_loop(session=session))
             await asyncio.gather(*tasks)
-
 
     async def purchase_request_loop(self, session):
         # TODO: Add proxy
@@ -221,9 +220,6 @@ class AioAutobuy:
             exit()
 
 
-
-
-
 if __name__ == '__main__':
     async def main():
         a = AioAutobuy(sale_id="135970432061947904", box_num=1, use_proxy=True)
@@ -234,8 +230,6 @@ if __name__ == '__main__':
         print(a.sale_start_time)
         print(a.is_auth)
 
+
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
-
-
-

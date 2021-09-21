@@ -1,2 +1,1 @@
-from .autobuy_main import AutoBuy
-from .autobuy_main import get_time
+from .autobuy_async import AioAutobuy
