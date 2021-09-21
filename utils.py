@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import datetime
 
 import requests
 import tabulate
@@ -23,25 +24,14 @@ def get_sales_list():
     return sales_list
 
 
-def print_dict(m_dict):
-    print(json.dumps(m_dict, indent=4, sort_keys=True))
+def print_dict(_dict):
+    # Print readable dict from <_dict>
+
+    print(json.dumps(_dict, indent=4, sort_keys=True))
 
 
 def print_table(_list: list):
-    # header = _list[0].keys()
-    # rows = [x.values() for x in _list]
-
-    # for _dict in _list:
-    #     if _dict:
-    #         header = _dict.keys()
-    #         rows = [x.values() for x in _list if x]
-    #         # rows = []
-    #         # for __dict in _list:
-    #         #     if __dict:
-    #         #         rows.append(__dict.values())
-    #         break
-    #     else:
-    #         continue
+    # Print readable table from <_list>
 
     for _dict in _list:
         try:
@@ -53,12 +43,37 @@ def print_table(_list: list):
             continue
 
 
+def get_cookies(cookies_string: str) -> list:
+    # Get list of cookies from cookie string
+    # [ [name, value], ... ]
 
-
-def get_cookies(cookies_string):
     _cookies_list = cookies_string.split("; ")
     cookies_list = [[cookie.split("=")[0], cookie.split("=")[1]] for cookie in _cookies_list]
     return cookies_list
+
+
+def get_proxy_list(filename: str) -> list:
+    # Return proxy list from <filename> file
+
+    with open(filename, "r") as file:
+        proxy_list = file.read().splitlines()
+        return proxy_list
+
+
+def proxy_generator(proxy_list):
+    # Infinity consistently returning proxy from <proxy_list>
+
+    proxy_num = 0
+    while True:
+        yield proxy_list[proxy_num]
+        proxy_num += 1
+        if proxy_num == len(proxy_list):
+            proxy_num = 0
+
+
+def get_time():
+    _time = datetime.now().strftime("%H:%M:%S.%f")[:-4]
+    return _time
 
 
 if __name__ == '__main__':

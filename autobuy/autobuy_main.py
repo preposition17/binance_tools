@@ -10,11 +10,7 @@ from dotenv import load_dotenv
 from fake_useragent import UserAgent
 
 from utils import get_cookies
-
-
-def get_time():
-    _time = datetime.now().strftime("%H:%M:%S.%f")[:-4]
-    return _time
+from utils import get_time
 
 
 class AutoBuy:
@@ -41,7 +37,7 @@ class AutoBuy:
 
 
     @staticmethod
-    def get_proxy_list(looger):
+    def get_proxy_list(logger):
         # Get list of proxies from <proxy.txt>
 
         logger.info(f'{get_time()}: Proxy list getting.')

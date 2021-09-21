@@ -1,10 +1,11 @@
 import time
+import asyncio
 
 from utils import print_table
 from utils import get_sales_list
 
 from boxes import Boxes
-from single_mode_class import SingleMode
+from single_mode_async import AioSingleMode
 from autobuy import AutoBuy
 
 
@@ -61,11 +62,12 @@ if __name__ == '__main__':
 
     if selected_mode == 2:
         if input("Use a telegram bot? (y/n) ").lower() == "y":
-            parser = SingleMode(sale_serial_number=selected_sale_serial_num, use_bot=True)
-            parser.start_parsing()
+            parser = AioSingleMode(sale_serial_number=selected_sale_serial_num, use_bot=True, use_proxy=False)
         else:
-            parser = SingleMode(sale_serial_number=selected_sale_serial_num, use_bot=False)
-            parser.start_parsing()
+            parser = AioSingleMode(sale_serial_number=selected_sale_serial_num, use_bot=False, use_proxy=False)
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(parser.run())
 
 
     if selected_mode == 3:

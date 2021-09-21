@@ -1,11 +1,10 @@
 import os
-from datetime import datetime
 from functools import partial
 import random
 from multiprocessing import Pool
 from multiprocessing import Manager
 import time
-import datetime
+from datetime import datetime
 
 import requests
 
@@ -133,7 +132,7 @@ class SingleMode:
 
                     continue
 
-    def get_all_parsed_products_data(self, product_ids: list, proc_num: int = 6, bot=None):
+    def get_all_parsed_products_data(self, product_ids: list, proc_num: int = 6):
         # Get all products data from product_ids list with multiprocessing
         while True:
             with Pool(proc_num) as p:
@@ -181,7 +180,6 @@ class SingleMode:
         _generated_ids_list = get_product_ids(_listed_product_ids[0], self.parsing_time)
         __filtered_ids_list = list(set(_generated_ids_list) - set(_listed_product_ids))
         _filtered_ids_list = list(set(__filtered_ids_list) - set(filtered_ids_list))
-
         _latest_products_id = self.get_all_parsed_products_data(product_ids=_filtered_ids_list) + filtered_ids_list
 
         return _latest_products_id
@@ -197,6 +195,6 @@ class SingleMode:
 
 
 if __name__ == '__main__':
-    sale_id = str(133912760290440192)
-    parser = SingleMode(sale_id, True)
+    sale_id = str(133948907490164736)
+    parser = SingleMode(sale_id, False)
     parser.start_parsing()
