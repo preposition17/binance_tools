@@ -1,18 +1,18 @@
+import os
 import time
 import asyncio
 
 from utils import print_table
 from utils import get_sales_list
 
-from boxes import Boxes
-from single_mode_async import AioSingleMode
-from autobuy import AutoBuy
+from batchmode import BatchMode
+from singlemod import AioSingleMode
+from autobuy import AioAutobuy
 
 
 sales_list = get_sales_list()
 
 modes = [
-    '[0] Get all boxes',
     '[1] Get batched boxes',
     '[2] Single parsing mode',
     '[3] AutoBuy mode'
@@ -31,28 +31,17 @@ if __name__ == '__main__':
         print(mode)
     selected_mode = int(input("Select mode: "))
 
-    if selected_mode == 0:
-        def get_all_boxes():
-            boxes = Boxes(selected_sale_serial_num)
-            all_boxes = boxes.get_all_boxes_list()
-            print_table(all_boxes)
-            is_reload = input("Reload? (y/n) ")
-            if is_reload == 'y':
-                get_all_boxes()
-        get_all_boxes()
-
 
     if selected_mode == 1:
         batch_size = int(input("Enter minimum batch size: ")) - 1
-        boxes = Boxes(selected_sale_serial_num)
+        batch_parser = BatchMode(selected_sale_serial_num)
         is_bot = False
         if input("Use a telegram bot? (y/n) ").lower() == "y":
             is_bot = True
-            boxes.send_to_telegram(batch_size=batch_size)
+            batch_parser.send_to_telegram(batch_size=batch_size)
         else:
             def get_batched_boxes():
-
-                all_batched_boxes = boxes.get_batch_boxes(batch_size)
+                all_batched_boxes = batch_parser.get_batch_boxes(batch_size)
                 print_table(all_batched_boxes)
 
             while True:
@@ -62,17 +51,26 @@ if __name__ == '__main__':
 
     if selected_mode == 2:
         if input("Use a telegram bot? (y/n) ").lower() == "y":
-            parser = AioSingleMode(sale_serial_number=selected_sale_serial_num, use_bot=True, use_proxy=False)
+            single_parser = AioSingleMode(sale_serial_number=selected_sale_serial_num, use_bot=True, use_proxy=False)
         else:
-            parser = AioSingleMode(sale_serial_number=selected_sale_serial_num, use_bot=False, use_proxy=False)
+            single_parser = AioSingleMode(sale_serial_number=selected_sale_serial_num, use_bot=False, use_proxy=False)
 
+        single_parser.proxy_file = os.path.join("proxy", "proxy_single.txt")
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(parser.run())
+        loop.run_until_complete(single_parser.run())
 
 
     if selected_mode == 3:
         box_num = int(input("Enter box num: "))
-        auto_buy = AutoBuy(sale_id=selected_sale_id, box_num=box_num)
-        auth_successful = auto_buy.auth()
-        # auto_buy.sale_start_time = time.time()*1000+2000
-        auto_buy.purchase()
+
+        async def autobuy_run():
+            auto_buy = AioAutobuy(sale_id=selected_sale_id, box_num=box_num, use_proxy=True)
+            auto_buy.logger_file = os.path.join("logs", "autobuy.log")
+            auto_buy.env_file = ".env"
+            auto_buy.proxy_file = os.path.join("proxy", "proxy_autobuy.txt")
+            auto_buy.sale_start_time = time.time() * 1000 + 4000
+            auto_buy.sec_to_stop = 5
+            await auto_buy.run()
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(autobuy_run())
