@@ -52,11 +52,16 @@ if __name__ == '__main__':
 
     if selected_mode == 2:
         if input("Use a telegram bot? (y/n) ").lower() == "y":
-            single_parser = AioSingleMode(sale_serial_number=selected_sale_serial_num, use_bot=True, use_proxy=False)
+            single_parser = AioSingleMode(sale_serial_number=selected_sale_serial_num,
+                                          use_bot=True,
+                                          use_proxy=True,
+                                          proxy_file=os.path.join("proxy", "proxy_single.txt"))
         else:
-            single_parser = AioSingleMode(sale_serial_number=selected_sale_serial_num, use_bot=False, use_proxy=False)
+            single_parser = AioSingleMode(sale_serial_number=selected_sale_serial_num,
+                                          use_bot=False,
+                                          use_proxy=True,
+                                          proxy_file=os.path.join("proxy", "proxy_single.txt"))
 
-        single_parser.proxy_file = os.path.join("proxy", "proxy_single.txt")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(single_parser.run())
 

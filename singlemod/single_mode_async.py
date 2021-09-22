@@ -21,8 +21,11 @@ def get_product_ids(product_id, ids_range: int):
 
 
 class AioSingleMode:
-    def __init__(self, sale_serial_number, use_bot, use_proxy):
-        self.proxy_file = "../proxy/proxy_single.txt"
+    def __init__(self, sale_serial_number, use_bot, use_proxy, proxy_file=None):
+        if proxy_file:
+            self.proxy_file = proxy_file
+        else:
+            self.proxy_file = os.path.join("..", "proxy", "proxy_single.txt")
 
         self.listed_products_url = 'https://www.binance.com/bapi/nft/v1/public/nft/market-mystery/mystery-list'
         self.single_product_data_url = 'https://www.binance.com/bapi/nft/v1/friendly/nft/nft-trade/product-detail'
@@ -251,7 +254,9 @@ class AioSingleMode:
 
 if __name__ == '__main__':
     async def main():
-        a = AioSingleMode(str(133948907490164736), use_bot=True, use_proxy=False)
+        a = AioSingleMode(str(133948907490164736),
+                          use_bot=True,
+                          use_proxy=False)
         await a.run()
 
 
