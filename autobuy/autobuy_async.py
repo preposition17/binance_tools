@@ -18,7 +18,7 @@ from utils import proxy_generator
 
 
 class AioAutobuy:
-    def __init__(self, sale_id: str, box_num: int, use_proxy: bool = False):
+    def __init__(self, sale_id: str, box_num: int, use_proxy: bool = False, proxy_file=None):
 
         # User settings
         self.sale_id = sale_id
@@ -26,9 +26,12 @@ class AioAutobuy:
         self.use_proxy = use_proxy
 
         # Files path
-        self.logger_file = "../logs/autobuy.log"
-        self.env_file = "../.env"
-        self.proxy_file = "../proxy/proxy_autobuy.txt"
+        self.logger_file = os.path.join(os.path.dirname(__file__), "autobuy.log")
+        self.env_file = os.path.join(os.path.dirname(__file__), ".env")
+        if proxy_file:
+            self.proxy_file = proxy_file
+        else:
+            self.proxy_file = os.path.join("..", "proxy", "proxy_autobuy.txt")
 
         # Logger
         self.logger = logging.getLogger("AioAutoBuy")

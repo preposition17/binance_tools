@@ -70,10 +70,10 @@ if __name__ == '__main__':
         box_num = int(input("Enter box num: "))
 
         async def autobuy_run():
-            auto_buy = AioAutobuy(sale_id=selected_sale_id, box_num=box_num, use_proxy=True)
-            auto_buy.logger_file = os.path.join("logs", "autobuy.log")
-            auto_buy.env_file = ".env"
-            auto_buy.proxy_file = os.path.join("proxy", "proxy_autobuy.txt")
+            auto_buy = AioAutobuy(sale_id=selected_sale_id,
+                                  box_num=box_num,
+                                  use_proxy=True,
+                                  proxy_file=os.path.join("proxy", "proxy_autobuy.txt"))
             auto_buy.sale_start_time = time.time() * 1000 + 4000
             auto_buy.sec_to_stop = 5
             await auto_buy.run()
